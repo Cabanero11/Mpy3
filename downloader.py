@@ -1,5 +1,6 @@
 import yt_dlp
 import os
+import sys
 import tkinter as tk
 from tkinter import ttk, messagebox
 
@@ -36,6 +37,16 @@ def download_video(link):
     except Exception as e:
         print("Ocurrió un error durante la descarga de video:", e)
         return None, None
+
+def resource_path(relative_path):
+    """ Conseguir el path, bien para cuando se haga el .exe """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 # Función para manejar el evento del botón de Toggle
 def toggle_button_clicked():
@@ -82,8 +93,8 @@ url_entry.focus()
 
 
 # Imágenes para el botón de toggle
-audio_on_img = tk.PhotoImage(file="audio_on.png")
-video_on_img = tk.PhotoImage(file="video_on.png")
+audio_on_img = tk.PhotoImage(file=resource_path('audio_on.png'))
+video_on_img = tk.PhotoImage(file=resource_path('video_on.png'))
 
 toggle_text = tk.StringVar(value="Audio (.mp3)")
 
