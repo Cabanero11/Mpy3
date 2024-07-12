@@ -10,6 +10,7 @@ def progress_hook(d):
         percent = d['_percent_str'].strip()
         percent = percent.replace('[0;94m', '').replace('[0m', '')  # Limpiar códigos de color
         status_label.config(text=f"[{percent}] descargado")
+        root.update_idletasks()  # Actualizar la interfaz gráfica
 
 # Función para descargar el audio desde YouTube
 def download_audio(link, audio_quality):
@@ -94,11 +95,23 @@ def download_button_clicked():
 # Configuración de la interfaz gráfica
 root = tk.Tk()
 root.title("Descargador de YouTube")
-root.geometry("400x400")
+root.geometry("400x320")
 root.resizable(False, False)
 root.configure(bg="#f0f0f0")  # Color de fondo similar al estilo de Windows 11
 # Se pone audio default, sino da error el 'download_function'
 download_function = download_audio
+
+# Configuración para centrar la ventana en la pantalla
+window_width = 400
+window_height = 320
+
+screen_width = root.winfo_screenwidth()
+screen_height = root.winfo_screenheight()
+
+x_coordinate = int((screen_width / 2) - (window_width / 2))
+y_coordinate = int((screen_height / 2) - (window_height / 2))
+
+root.geometry(f"{window_width}x{window_height}+{x_coordinate}+{y_coordinate}")
 
 estilo = ttk.Style()
 estilo.configure('BW.TLabel', font=('Helvetica', 14))
