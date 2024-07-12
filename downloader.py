@@ -92,10 +92,25 @@ def download_button_clicked():
     else:
         messagebox.showwarning("Advertencia", "Por favor, introduce un enlace de YouTube")
 
+def abrir_carpeta_descargas():
+    try:
+        # Directorio actual donde se ejecuta el script
+        directorio_actual = os.getcwd()
+        
+        # Combinar el directorio actual con 'descargas/'
+        carpeta_descargas = os.path.join(directorio_actual, 'descargas')
+        
+        # Abrir la carpeta en el explorador de archivos del sistema operativo
+        os.startfile(carpeta_descargas)
+        
+    except Exception as e:
+        print(f"Bruh donde esta la carpeta: {e}")
+
+
 # Configuración de la interfaz gráfica
 root = tk.Tk()
 root.title("Descargador de YouTube")
-root.geometry("400x320")
+root.geometry("400x360")
 root.resizable(False, False)
 root.configure(bg="#f0f0f0")  # Color de fondo similar al estilo de Windows 11
 # Se pone audio default, sino da error el 'download_function'
@@ -103,7 +118,7 @@ download_function = download_audio
 
 # Configuración para centrar la ventana en la pantalla
 window_width = 400
-window_height = 320
+window_height = 360
 
 screen_width = root.winfo_screenwidth()
 screen_height = root.winfo_screenheight()
@@ -150,6 +165,10 @@ quality_combobox.pack(pady=5)
 
 # Botón para iniciar la descarga
 download_button = ttk.Button(root, text="Descargar", command=download_button_clicked, style='my.TButton')
+download_button.pack(pady=(10, 10))
+
+# Botón para iniciar la descarga
+download_button = ttk.Button(root, text="Abrir Carpeta", command=abrir_carpeta_descargas, style='my.TButton')
 download_button.pack(pady=(10, 10))
 
 # Etiqueta para mostrar el progreso
