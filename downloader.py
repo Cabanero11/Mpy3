@@ -4,6 +4,13 @@ import sys
 import tkinter as tk
 from tkinter import ttk, messagebox
 
+# Función de hook para actualizar el progreso
+def progress_hook(d):
+    if d['status'] == 'downloading':
+        percent = d['_percent_str'].strip()
+        percent = percent.replace('[0;94m', '').replace('[0m', '')  # Limpiar códigos de color
+        status_label.config(text=f"[{percent}] descargado")
+
 # Función para descargar el audio desde YouTube
 def download_audio(link, audio_quality):
     ydl_opts = {
@@ -14,6 +21,7 @@ def download_audio(link, audio_quality):
             'preferredcodec': 'mp3',
             'preferredquality': audio_quality,
         }],
+        'progress_hooks': [progress_hook],  # Agregar hook de progreso
     }
 
     try:
@@ -32,6 +40,7 @@ def download_video(link, video_quality):
         'format': f'bestvideo[height<={video_quality}]+bestaudio[ext=m4a]/best[height<={video_quality}]',
         'outtmpl': 'descargas/%(title)s.%(ext)s',
         'merge_output_format': 'mp4',
+        'progress_hooks': [progress_hook],  # Agregar hook de progreso
     }
 
     try:
@@ -78,15 +87,18 @@ def download_button_clicked():
         filename, title = download_function(link, quality)
         if filename and title:
             messagebox.showinfo("Descarga Completada", f"¡Descarga completada!\nArchivo guardado como {filename}")
+            status_label.config(text="")  # Limpiar etiqueta de estado al finalizar
     else:
         messagebox.showwarning("Advertencia", "Por favor, introduce un enlace de YouTube")
 
 # Configuración de la interfaz gráfica
 root = tk.Tk()
 root.title("Descargador de YouTube")
-root.geometry("400x300")
+root.geometry("400x400")
 root.resizable(False, False)
 root.configure(bg="#f0f0f0")  # Color de fondo similar al estilo de Windows 11
+# Se pone audio default, sino da error el 'download_function'
+download_function = download_audio
 
 estilo = ttk.Style()
 estilo.configure('BW.TLabel', font=('Helvetica', 14))
@@ -113,8 +125,8 @@ toggle_button = ttk.Checkbutton(root, textvariable=toggle_text, variable=toggle_
 toggle_button.pack(pady=10)
 
 # Opciones de calidad
-audio_qualities = ['128', '192', '256', '320']
-video_qualities = ['360', '480', '720', '1080']
+audio_qualities = ['128 kbps', '192 kbps', '256 kbps']
+video_qualities = ['360p', '480p', '720p', '1080p']
 
 # Combobox para seleccionar la calidad
 quality_label = ttk.Label(root, text="Selecciona la calidad:", style='BW.TLabel')
@@ -126,6 +138,10 @@ quality_combobox.pack(pady=5)
 # Botón para iniciar la descarga
 download_button = ttk.Button(root, text="Descargar", command=download_button_clicked, style='my.TButton')
 download_button.pack(pady=(10, 10))
+
+# Etiqueta para mostrar el progreso
+status_label = ttk.Label(root, text="", style='BW.TLabel')
+status_label.pack(pady=(5, 5))
 
 # Ejecutar la aplicación
 root.mainloop()
